@@ -1,11 +1,6 @@
 package com.josealfonsomora.firebasephonenumberauth.ui.login
 
-import android.app.Activity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -13,12 +8,18 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import com.google.firebase.auth.PhoneAuthProvider
 import com.josealfonsomora.firebasephonenumberauth.R
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_login.*
 
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var loginViewModel: LoginViewModel
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,11 +27,9 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val phoneNumber = findViewById<EditText>(R.id.phoneNumber)
+        val verificationCode = findViewById<EditText>(R.id.verificationCode)
         val login = findViewById<Button>(R.id.login)
         val loading = findViewById<ProgressBar>(R.id.loading)
-
-        loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
-                .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
@@ -48,16 +47,15 @@ class LoginActivity : AppCompatActivity() {
             val loginResult = it ?: return@Observer
 
             loading.visibility = View.GONE
-            if (loginResult.error != null) {
-                showLoginFailed(loginResult.error)
-            }
-            if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
-            }
-            setResult(Activity.RESULT_OK)
 
-            //Complete and destroy login activity once successful
-            finish()
+            when (loginResult) {
+                is LoginResult.Error -> showLoginFailed(loginResult.error)
+                is LoginResult.Success -> updateUiWithUser(loginResult.success)
+                is LoginResult.CodeSent -> updateUiWithCode(
+                    loginResult.verificationId,
+                    loginResult.token
+                )
+            }
         })
 
         phoneNumber.afterTextChanged {
@@ -66,22 +64,37 @@ class LoginActivity : AppCompatActivity() {
 
         login.setOnClickListener {
             loading.visibility = View.VISIBLE
+
             loginViewModel.login(phoneNumber.text.toString())
+
+
+            // can be launched in a separate asynchronous job
         }
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
-        val displayName = model.displayName
+        val displayName = model.phoneNumber
         // TODO : initiate successful logged in experience
         Toast.makeText(
-                applicationContext,
-                "$welcome $displayName",
-                Toast.LENGTH_LONG
+            applicationContext,
+            "$welcome $displayName",
+            Toast.LENGTH_LONG
         ).show()
     }
 
-    private fun showLoginFailed(@StringRes errorString: Int) {
+    private fun updateUiWithCode(
+        verificationId: String,
+        token: PhoneAuthProvider.ForceResendingToken
+    ){
+        phoneNumber.visibility = View.INVISIBLE
+        verificationCode.visibility = View.VISIBLE
+
+        login.setOnClickListener {
+            loginViewModel.verify(verificationId, verificationCode.text.toString())
+        }
+    }
+    private fun showLoginFailed(errorString: String) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
 }

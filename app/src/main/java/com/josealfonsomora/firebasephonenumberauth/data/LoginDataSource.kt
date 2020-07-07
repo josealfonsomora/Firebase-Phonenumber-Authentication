@@ -2,11 +2,12 @@ package com.josealfonsomora.firebasephonenumberauth.data
 
 import com.josealfonsomora.firebasephonenumberauth.data.model.LoggedInUser
 import java.io.IOException
+import javax.inject.Inject
 
 /**
  * Class that handles authentication w/ login credentials and retrieves user information.
  */
-class LoginDataSource {
+class LoginDataSource @Inject constructor() {
 
     fun login(phoneNumber: String): Result<LoggedInUser> {
         try {
