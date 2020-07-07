@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "720589797987",
+    "firebase_url": "https://fir-phone-number-auth-6d417.firebaseio.com",
+    "project_id": "fir-phone-number-auth-6d417",
+    "storage_bucket": "fir-phone-number-auth-6d417.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720589797987:android:b87b0575ffe1d985469656",
+        "android_client_info": {
+          "package_name": "com.josealfonsomora.firebasephonenumberauth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "720589797987-r66eq5rk71e2hlj3r3i561q515ef90mm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0JU5xipLYGgnInK7uSA45EB9DwdEYOhU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "720589797987-r66eq5rk71e2hlj3r3i561q515ef90mm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
