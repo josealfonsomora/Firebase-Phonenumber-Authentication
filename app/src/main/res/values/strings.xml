@@ -7,6 +7,8 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_phone_number">Not a valid phone number</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="phone_number">+xx xxxx xxxx xx</string>
 </resources>
